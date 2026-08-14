@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CryptoMate</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#0f1117;color:#f5f7fb}
+header{padding:22px 18px;background:#171a23;position:sticky;top:0;z-index:2}
+h1{margin:0;font-size:25px}.sub{color:#9da5b5;font-size:13px;margin-top:4px}
+nav{display:flex;gap:8px;overflow:auto;padding:12px;background:#171a23}
+nav button{border:0;border-radius:10px;padding:10px 13px;background:#252a36;color:#fff;white-space:nowrap}
+nav button.active{background:#5b6cff}
+main{padding:16px;max-width:680px;margin:auto}.card{background:#181c25;border:1px solid #292f3b;border-radius:16px;padding:16px;margin-bottom:14px}
+label{display:block;color:#aab1c0;font-size:13px;margin:10px 0 5px}
+input,select{width:100%;padding:12px;border-radius:10px;border:1px solid #343b49;background:#0f1219;color:#fff;font-size:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{width:100%;padding:13px;border:0;border-radius:11px;background:#5b6cff;color:#fff;font-weight:700;margin-top:12px}
+.result{font-size:22px;font-weight:800;margin-top:14px}.green{color:#35d07f}.red{color:#ff6b7a}.muted{color:#9da5b5}
+.hidden{display:none}.row{display:flex;justify-content:space-between;gap:12px}.item{padding:12px 0;border-bottom:1px solid #292f3b}.small{font-size:12px;color:#8e96a6}
+footer{text-align:center;color:#747c8c;font-size:11px;padding:20px}
+</style>
+</head>
+<body>
+<header><h1>🚀 CryptoMate</h1><div class="sub">Smart crypto & money calculators</div></header>
+<nav>
+<button class="active" onclick="show('profit',this)">Profit</button>
+<button onclick="show('convert',this)">Converter</button>
+<button onclick="show('gas',this)">Gas Fee</button>
+<button onclick="show('percent',this)">Percent</button>
+<button onclick="show('portfolio',this)">Portfolio</button>
+</nav>
+<main>
+<section id="profit" class="page">
+<div class="card"><h2>🪙 Profit / Loss</h2>
+<div class="grid"><div><label>Buy Price</label><input id="buy" type="number" value="100"></div><div><label>Sell Price</label><input id="sell" type="number" value="130"></div></div>
+<label>Investment (₹)</label><input id="invest" type="number" value="1000">
+<button class="btn" onclick="profit()">Calculate</button><div id="profitOut" class="result"></div></div>
+</section>
+
+<section id="convert" class="page hidden"><div class="card"><h2>💱 INR / USD</h2>
+<label>Amount</label><input id="amt" type="number" value="1000"><label>USD rate (₹ per $)</label><input id="rate" type="number" value="90">
+<button class="btn" onclick="convert()">Convert</button><div id="convOut" class="result"></div>
+</div></section>
+
+<section id="gas" class="page hidden"><div class="card"><h2>⛽ Gas Fee</h2>
+<label>Gas Used</label><input id="gasUsed" type="number" value="21000"><label>Gas Price (Gwei)</label><input id="gwei" type="number" value="20"><label>ETH Price (₹)</label><input id="eth" type="number" value="300000">
+<button class="btn" onclick="gas()">Calculate</button><div id="gasOut" class="result"></div>
+</div></section>
+
+<section id="percent" class="page hidden"><div class="card"><h2>📊 Percentage</h2>
+<label>Value</label><input id="pv" type="number" value="1000"><label>Percentage</label><input id="pp" type="number" value="15">
+<button class="btn" onclick="percent()">Calculate</button><div id="percentOut" class="result"></div>
+</div></section>
+
+<section id="portfolio" class="page hidden"><div class="card"><h2>📁 Portfolio</h2>
+<div class="grid"><div><label>Coin</label><input id="coin" value="BTC"></div><div><label>Amount</label><input id="qty" type="number" value="0.01"></div></div>
+<label>Current Price (₹)</label><input id="price" type="number" value="10000000">
+<button class="btn" onclick="addHolding()">Add Holding</button><div id="holdings"></div></div>
+</section>
+
+<div class="card"><b>⚠️ Disclaimer</b><p class="muted small">Crypto prices can change rapidly. This app provides calculations only and is not financial or investment advice.</p></div>
+</main>
+<footer>CryptoMate prototype • No guaranteed earnings</footer>
+<script>
+function show(id,b){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active')}
+function n(id){return Number(document.getElementById(id).value)||0}
+function money(x){return new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:2}).format(x)}
+function profit(){let buy=n('buy'),sell=n('sell'),inv=n('invest');if(buy<=0)return;let p=inv*(sell/buy-1);let roi=(sell/buy-1)*100;let e=document.getElementById('profitOut');e.className='result '+(p>=0?'green':'red');e.innerHTML=(p>=0?'Profit: ':'Loss: ')+money(Math.abs(p))+'<br><span class="small">ROI: '+roi.toFixed(2)+'%</span>'}
+function convert(){let a=n('amt'),r=n('rate');document.getElementById('convOut').innerHTML='₹'+a.toLocaleString('en-IN')+' ≈ $'+(a/r).toFixed(2)}
+function gas(){let used=n('gasUsed'),g=n('gwei'),eth=n('eth');let feeEth=used*g/1e9;document.getElementById('gasOut').innerHTML=feeEth.toFixed(8)+' ETH<br>≈ '+money(feeEth*eth)}
+function percent(){let v=n('pv'),p=n('pp');document.getElementById('percentOut').innerHTML=money(v*p/100)}
+let holdings=[];
+function addHolding(){let c=document.getElementById('coin').value.trim().toUpperCase(),q=n('qty'),p=n('price');if(!c||q<=0)return;holdings.push({c,q,p});render()}
+function render(){let t=holdings.reduce((a,x)=>a+x.q*x.p,0);document.getElementById('holdings').innerHTML=holdings.length?holdings.map(x=>`<div class="item row"><span><b>${x.c}</b><br><span class="small">${x.q} units × ${money(x.p)}</span></span><b>${money(x.q*x.p)}</b></div>`).join('')+`<div class="result">Total: ${money(t)}</div>`:'<p class="muted">No holdings yet.</p>'}
+profit();render();
+</script>
+</body></html>
