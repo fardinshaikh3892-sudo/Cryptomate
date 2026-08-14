@@ -19,7 +19,7 @@ input,select{width:100%;padding:12px;border-radius:10px;border:1px solid #343b49
 .hidden{display:none}.row{display:flex;justify-content:space-between;gap:12px}.item{padding:12px 0;border-bottom:1px solid #292f3b}.small{font-size:12px;color:#8e96a6}
 footer{text-align:center;color:#747c8c;font-size:11px;padding:20px}
 </style>
-</head>
+<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#5b6cff"><link rel="apple-touch-icon" href="icons/icon-192.png"></head>
 <body>
 <header><h1>🚀 CryptoMate</h1><div class="sub">Smart crypto & money calculators</div></header>
 <nav>
@@ -74,4 +74,4 @@ function addHolding(){let c=document.getElementById('coin').value.trim().toUpper
 function render(){let t=holdings.reduce((a,x)=>a+x.q*x.p,0);document.getElementById('holdings').innerHTML=holdings.length?holdings.map(x=>`<div class="item row"><span><b>${x.c}</b><br><span class="small">${x.q} units × ${money(x.p)}</span></span><b>${money(x.q*x.p)}</b></div>`).join('')+`<div class="result">Total: ${money(t)}</div>`:'<p class="muted">No holdings yet.</p>'}
 profit();render();
 </script>
-</body></html>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("service-worker.js"));}</script></body></html>
